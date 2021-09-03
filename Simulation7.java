@@ -119,9 +119,16 @@ public class Simulation7 {
 			@SuppressWarnings("unused")
 			Datacenter datacenter1 = createDatacenter("Datacenter_1",2,hostId,ram,storage,bw);
 
-			//Third step: Create Broker
-			DatacenterBroker broker = createBroker();
-			int brokerId = broker.getId();
+			//Third step: Create Brokers
+			int numBrokers = 5;
+			List<DatacenterBroker> brokerList = new ArrayList<DatacenterBroker>(numBrokers);
+			List<Integer> brokerIdList = new ArrayList<Integer>(numBrokers);
+			
+			for (int i = 0; i < numBrokers; i++) {
+				DatacenterBroker broker = createBroker();
+				brokerList.add(broker);
+				brokerIdList.add(broker.getId());
+			}
 			
 			//VM Parameters
 			long size = 10000; //image size (MB)
@@ -139,17 +146,17 @@ public class Simulation7 {
 			UtilizationModel utilizationModel = new UtilizationModelFull();
 			
 			//Fourth step: Create VMs and Cloudlets and send them to broker
-			vmlist = createVM(brokerId,20,size,ramForVm,mips,bwForVm,pesNumber,vmm); //creating 20 vms
-			cloudletList = createCloudlet(brokerId,40,length,fileSize,outputSize,pesNumberForCloudlets, utilizationModel); // creating 40 cloudlets
+			vmlist = createVM(brokerIdList.get(2),20,size,ramForVm,mips,bwForVm,pesNumber,vmm); //creating 20 vms
+			cloudletList = createCloudlet(brokerIdList.get(2),40,length,fileSize,outputSize,pesNumberForCloudlets, utilizationModel); // creating 40 cloudlets
 
-			broker.submitVmList(vmlist);
-			broker.submitCloudletList(cloudletList);
+			brokerList.get(2).submitVmList(vmlist);
+			brokerList.get(2).submitCloudletList(cloudletList);
 
 			// Fifth step: Starts the simulation
 			CloudSim.startSimulation();
 
 			// Final step: Print results when simulation is over
-			List<Cloudlet> newList = broker.getCloudletReceivedList();
+			List<Cloudlet> newList = brokerList.get(2).getCloudletReceivedList();
 
 			CloudSim.stopSimulation();
 
